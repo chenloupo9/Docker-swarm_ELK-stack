@@ -7,7 +7,7 @@ This is simple repository for creating a docker swarm with one manager and two w
 2. **Docker Compose** version 1.20.0 or newer 
 3. Host with an available 2CPU and 4GB Memory at least 
 
-*:information_source:  I was using the [Play-with-docker](https://labs.play-with-docker.com/) website to run this ELK stack.
+*:information_source:  I was using the [Play-with-docker](https://labs.play-with-docker.com/) website to run this ELK stack.*
 
 ## Creating Docker swarm cluster
 - On the manager node create an cluster with the command
@@ -43,6 +43,6 @@ cd Docker-swarm_ELK-stack
 docker stack deploy -c docker-stack.yml myelk
 ```
 
-*:information_source:
+*:information_source: It may take a minute for kibana to initialize*
 
 
