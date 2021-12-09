@@ -21,7 +21,7 @@ docker swarm init --advertise-addr <manager-ip-address> --listen-addr <manager-i
 docker swarm join-token worker
 ```
 
-- You can verify the nodes were added to the cluster and it infromation
+- You can verify the nodes were added to the cluster, and the cluster information.
 ```
 docker node ls
 docker info
@@ -59,13 +59,7 @@ docker stack deploy -c docker-stack.yml myelk
 ## Injecting date 
 - Inject logstash log files to elasticsearch
 ```
-# Using BSD netcat (Debian, Ubuntu, MacOS system, ...)
-cat /path/to/logfle.log | nc -q0 localhost 5000
-```
-
-```
-# Using GNU netcat (CentOS, Fedora, MacOS Homebrew, ...)
-cat /path/to/logfile.log | nc -c localhost 5000
+cat /path/to/logfle.log | nc -n localhost 5000
 ```
 
 * The default port for logstash input in 5000.
@@ -84,3 +78,8 @@ cat /path/to/logfile.log | nc -c localhost 5000
 docker stack rm myelk
 ```
 
+**:information_source: To run the ELK stack with the filebeat extension, follow to instructions in the README file located in the extensions/filebeat directory.
+
+```
+cd extensions/filebeat/
+```
