@@ -45,4 +45,42 @@ docker stack deploy -c docker-stack.yml myelk
 
 *:information_source: It may take a minute for kibana to initialize*
 
+- On the web broswer enter the <http://localhost:5601>
+* The defualt port of kibana is 5601.
+
+**:warning: For the [play-with-docker](https://labs.play-with-docker.com/) you will need to press on the port number at the top of the page and a new tab with kibana will be open.
+
+## Initial setup
+- Loging to kibana
+*By default the stack is pre-configured with the following **privileged** bootstrap user:* 
+ * user: *elastic* 
+ * password: *changeme*
+
+## Injecting date 
+- Inject logstash log files to elasticsearch
+```
+# Using BSD netcat (Debian, Ubuntu, MacOS system, ...)
+cat /path/to/logfle.log | nc -q0 localhost 5000
+```
+
+```
+# Using GNU netcat (CentOS, Fedora, MacOS Homebrew, ...)
+cat /path/to/logfile.log | nc -c localhost 5000
+```
+
+* The default port for logstash input in 5000.
+
+## Creating an index pattern 
+- On the kibana web UI navigate to the _Discover_ on the left sidebar.
+- You should be able to create an index pattern.
+- Enter `logstash-*` to match the logstash indices.
+- Select `@timestamp` as the time filter filed from the menu below. 
+- Click `Create index pattern` and return to the _Discover_ page.
+- View the log entries. 
+
+## Cleanup
+- To remove the ELK stack use the folowing command: 
+```
+docker stack rm myelk
+```
 
