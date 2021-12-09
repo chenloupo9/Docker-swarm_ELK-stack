@@ -78,7 +78,7 @@ cat /path/to/logfle.log | nc -n localhost 5000
 docker stack rm myelk
 ```
 
-**:information_source: To run the ELK stack with the filebeat extension, follow to instructions in the README file located in the extensions/filebeat directory.
+**:information_source: To run the ELK stack with the filebeat extension, follow to instructions in the README file located in the extensions/filebeat directory.**
 
 ```
 cd extensions/filebeat/
