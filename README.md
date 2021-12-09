@@ -48,7 +48,7 @@ docker stack deploy -c docker-stack.yml myelk
 - On the web broswer enter the <http://localhost:5601>
 * The defualt port of kibana is 5601.
 
-**:warning: For the [play-with-docker](https://labs.play-with-docker.com/) you will need to press on the port number at the top of the page and a new tab with kibana will be open.
+**:warning: For the [play-with-docker](https://labs.play-with-docker.com/) you will need to press on the port number at the top of the page and a new tab with kibana will be open.**
 
 ## Initial setup
 - Loging to kibana
