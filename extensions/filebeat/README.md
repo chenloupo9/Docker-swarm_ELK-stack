@@ -9,8 +9,9 @@ Elasticsearch or Logstash for indexing.
 To include Filebeat in the stack, run Docker Compose from the root of the repository with an additional command line
 argument referencing the `filebeat-compose.yml` file:
 
-```console
-$ docker-compose -f docker-compose.yml -f extensions/filebeat/filebeat-compose.yml up
+```
+cd ~/Docker-swarm_ELK-stack
+docker-compose -f docker-compose.yml -f extensions/filebeat/filebeat-compose.yml up -d
 ```
 
 ## Configuring Filebeat
@@ -18,19 +19,23 @@ $ docker-compose -f docker-compose.yml -f extensions/filebeat/filebeat-compose.y
 The Filebeat configuration is stored in [`config/filebeat.yml`](./config/filebeat.yml). You can modify this file with
 the help of the [Configuration reference][filebeat-config].
 
-Any change to the Filebeat configuration requires a restart of the Filebeat container:
+## Initial setup
+- Loging to kibana
+*By default the stack is pre-configured with the following **privileged** bootstrap user:*
+ * user: *elastic*
+ * password: *changeme*
 
-```console
-$ docker-compose -f docker-compose.yml -f extensions/filebeat/filebeat-compose.yml restart filebeat
+## Creating an index pattern
+- On the kibana web UI navigate to the _Discover_ on the left sidebar.
+- You should be able to create an index pattern.
+- Enter `filebeat-*`.
+- Select `@timestamp` as the time filter filed from the menu below.
+- Click `Create index pattern` and return to the _Discover_ page.
+- View the log entries.
+
+## Cleanup
+In order to entirely shutdown the stack and remove all persisted data, including the Elasticsearch volume, run the following command: 
+```
+docker-compose -f docker-compose.yml -f extensions/filebea/filebeat-compose.yml down -v
 ```
 
-Please refer to the following documentation page for more details about how to configure Filebeat inside a Docker
-container: [Run Filebeat on Docker][filebeat-docker].
-
-## See also
-
-[Filebeat documentation][filebeat-doc]
-
-[filebeat-config]: https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-reference-yml.html
-[filebeat-docker]: https://www.elastic.co/guide/en/beats/filebeat/current/running-on-docker.html
-[filebeat-doc]: https://www.elastic.co/guide/en/beats/filebeat/current/index.html
