@@ -1,25 +1,101 @@
 version: '3.2'
 
 services:
-  elasticsearch:
+  es01:
     build:
       context: elasticsearch/
       args:
         ELK_VERSION: $ELK_VERSION
     volumes:
       - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro,z
-      - elasticsearch:/usr/share/elasticsearch/data:z
+      - elasticsearch01:/usr/share/elasticsearch/data:z
     ports:
       - "9200:9200"
       - "9300:9300"
     environment:
-      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
-      ELASTIC_PASSWORD: changeme
-      # Use single node discovery in order to disable production mode and avoid bootstrap checks.
-      # see: https://www.elastic.co/guide/en/elasticsearch/reference/current/bootstrap-checks.html
-      discovery.type: single-node
+      - "ES_JAVA_OPTS=-Xmx256m -Xms256m"
+      - ELASTIC_PASSWORD=changeme
+      - node.name=es01
+      - cluster.name=docker-cluster
+      - discovery.seed_hosts=es02,es03 
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true 
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
     networks:
       - elk
+    deploy: 
+      mode: replicated 
+      replicas: 1
+      placement: 
+        constraints: 
+          - "node.hostname==manager-01"
+
+  es02:
+    build:
+      context: elasticsearch/
+      args:
+        ELK_VERSION: $ELK_VERSION
+    volumes:
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro,z
+      - elasticsearch02:/usr/share/elasticsearch/data:z
+    ports:
+      - "9201:9200"
+      - "9301:9300"
+    environment:
+      - "ES_JAVA_OPTS=-Xmx256m -Xms256m"
+      - ELASTIC_PASSWORD=changeme
+      - node.name=es01
+      - cluster.name=docker-cluster
+      - discovery.seed_hosts=es01,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    networks:
+      - elk
+    deploy: 
+      mode: replicated
+      replicas: 1
+      placement: 
+        constraints: 
+          - "node.hostname==manager-02"
+
+  es03:
+    build:
+      context: elasticsearch/
+      args:
+        ELK_VERSION: $ELK_VERSION
+    volumes:
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro,z
+      - elasticsearch03:/usr/share/elasticsearch/data:z
+    ports:
+      - "9202:9200"
+      - "9302:9300"
+    environment:
+      - "ES_JAVA_OPTS=-Xmx256m -Xms256m"
+      - ELASTIC_PASSWORD=changeme
+      - node.name=es03
+      - cluster.name=docker-cluster
+      - discovery.seed_hosts=es01,es02
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    networks:
+      - elk
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement: 
+        constraints: 
+          - "node.hostname==manager-03"
 
   logstash:
     build:
@@ -39,7 +115,16 @@ services:
     networks:
       - elk
     depends_on:
-      - elasticsearch
+      - es01
+      - es02
+      - es03
+      - filebeat
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement: 
+        constraints: 
+          - "node.hostname==manager-03"
 
   kibana:
     build:
@@ -53,11 +138,26 @@ services:
     networks:
       - elk
     depends_on:
-      - elasticsearch
+      - es01
+      - es02 
+      - es03
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement: 
+        constraints: 
+          - "node.hostname==manager-01"
 
 networks:
   elk:
     driver: bridge
 
 volumes:
-  elasticsearch:
+  elasticsearch01:
+    driver: local
+  elasticsearch02:
+    driver: local
+  elasticsearch03:
+    driver: local
+
+
